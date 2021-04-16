@@ -1,8 +1,6 @@
-import './style';
-import 'balloon-css/balloon.min.css';
-import Emitter from 'tiny-emitter';
-import Draggabilly from 'draggabilly';
+import './style/index.scss';
 import validator from 'option-validator';
+import Emitter from './utils/emitter';
 import * as utils from './utils';
 import scheme from './scheme';
 import config from './config';
@@ -10,13 +8,13 @@ import Whitelist from './whitelist';
 import Template from './template';
 import I18n from './i18n';
 import Player from './player';
-import Controls from './controls';
+import Control from './control';
 import Contextmenu from './contextmenu';
 import Info from './info';
 import Subtitle from './subtitle';
 import Events from './events';
 import Hotkey from './hotkey';
-import Layers from './layers';
+import Layer from './layer';
 import Loading from './loading';
 import Notice from './notice';
 import Mask from './mask';
@@ -27,13 +25,46 @@ import Plugins from './plugins';
 import Mobile from './mobile';
 
 let id = 0;
-class Artplayer extends Emitter {
+const instances = [];
+export default class Artplayer extends Emitter {
     constructor(option) {
         super();
-        utils.errorHandle(typeof window.Promise === 'function', "Unsupported 'Promise' method");
-        this.option = utils.mergeDeep(Artplayer.DEFAULTS, option);
-        validator(this.option, scheme);
-        this.init();
+        this.option = validator(utils.mergeDeep(Artplayer.option, option), scheme);
+        this.isFocus = false;
+        this.isDestroy = false;
+        this.userAgent = utils.userAgent;
+        this.isMobile = utils.isMobile;
+        this.isWechat = utils.isWechat;
+        this.whitelist = new Whitelist(this);
+        this.template = new Template(this);
+        this.events = new Events(this);
+        if (this.whitelist.state) {
+            this.storage = new Storage(this);
+            this.icons = new Icons(this);
+            this.i18n = new I18n(this);
+            this.notice = new Notice(this);
+            this.player = new Player(this);
+            this.layers = new Layer(this);
+            this.controls = new Control(this);
+            this.contextmenu = new Contextmenu(this);
+            this.subtitle = new Subtitle(this);
+            this.info = new Info(this);
+            this.loading = new Loading(this);
+            this.hotkey = new Hotkey(this);
+            this.mask = new Mask(this);
+            this.setting = new Setting(this);
+            this.plugins = new Plugins(this);
+        } else {
+            this.mobile = new Mobile(this);
+        }
+
+        id += 1;
+        this.id = id;
+        instances.push(this);
+    }
+
+    static get instances() {
+        return instances;
     }
 
     static get version() {
@@ -68,11 +99,7 @@ class Artplayer extends Emitter {
         return validator.kindOf;
     }
 
-    static get Draggabilly() {
-        return Draggabilly;
-    }
-
-    static get DEFAULTS() {
+    static get option() {
         return {
             container: '#artplayer',
             url: '',
@@ -84,8 +111,10 @@ class Artplayer extends Emitter {
             muted: false,
             autoplay: false,
             autoSize: false,
+            autoMini: false,
             loop: false,
             flip: false,
+            rotate: false,
             playbackRate: false,
             aspectRatio: false,
             screenshot: false,
@@ -93,15 +122,23 @@ class Artplayer extends Emitter {
             hotkey: true,
             pip: false,
             mutex: true,
+            light: false,
+            backdrop: true,
             fullscreen: false,
             fullscreenWeb: false,
+            subtitleOffset: false,
+            miniProgressBar: false,
+            localVideo: false,
+            localSubtitle: false,
+            networkMonitor: false,
             layers: [],
             contextmenu: [],
-            quality: [],
             controls: [],
+            quality: [],
             highlight: [],
             plugins: [],
             whitelist: [],
+            switcher: [],
             thumbnails: {
                 url: '',
                 number: 60,
@@ -112,10 +149,12 @@ class Artplayer extends Emitter {
             subtitle: {
                 url: '',
                 style: {},
+                encoding: 'utf-8',
+                bilingual: false,
             },
             moreVideoAttr: {
                 controls: false,
-                preload: 'auto',
+                preload: utils.isSafari ? 'auto' : 'metadata',
             },
             icons: {},
             customType: {},
@@ -123,50 +162,19 @@ class Artplayer extends Emitter {
         };
     }
 
-    init() {
-        this.whitelist = new Whitelist(this);
-        this.template = new Template(this);
-        if (this.whitelist.state) {
-            this.isFocus = false;
-            this.isDestroy = false;
-            this.storage = new Storage(this);
-            this.icons = new Icons(this);
-            this.i18n = new I18n(this);
-            this.notice = new Notice(this);
-            this.events = new Events(this);
-            this.player = new Player(this);
-            this.layers = new Layers(this);
-            this.controls = new Controls(this);
-            this.contextmenu = new Contextmenu(this);
-            this.subtitle = new Subtitle(this);
-            this.info = new Info(this);
-            this.loading = new Loading(this);
-            this.hotkey = new Hotkey(this);
-            this.mask = new Mask(this);
-            this.setting = new Setting(this);
-            this.plugins = new Plugins(this);
-        } else {
-            this.mobile = new Mobile(this);
-        }
-
-        id += 1;
-        this.id = id;
-        Artplayer.instances.push(this);
-    }
-
-    destroy(removeHtml = false) {
-        if (this.events) {
-            this.events.destroy();
-        }
+    destroy(removeHtml = true) {
+        this.events.destroy();
         this.template.destroy(removeHtml);
-        Artplayer.instances.splice(Artplayer.instances.indexOf(this), 1);
+        instances.splice(instances.indexOf(this), 1);
         this.isDestroy = true;
         this.emit('destroy');
     }
 }
 
-Object.defineProperty(Artplayer, 'instances', {
-    value: [],
-});
-
-export default Artplayer;
+// eslint-disable-next-line no-console
+console.log(
+    '%c ArtPlayer %c __VERSION__ %c https://artplayer.org',
+    'color: #fff; background: #5f5f5f',
+    'color: #fff; background: #4bc729',
+    '',
+);

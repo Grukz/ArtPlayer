@@ -1,5 +1,7 @@
-export default function seekMix(art, player) {
-    Object.defineProperty(player, 'played', {
-        get: () => art.template.$video.currentTime / art.template.$video.duration,
+import { def } from '../utils';
+
+export default function playedMix(art, player) {
+    def(player, 'played', {
+        get: () => player.currentTime / player.duration,
     });
 }

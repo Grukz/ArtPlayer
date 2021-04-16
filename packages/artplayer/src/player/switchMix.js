@@ -1,45 +1,38 @@
-export default function switchMix(art, player) {
-    const { i18n, notice, option } = art;
+import { def } from '../utils';
 
-    Object.defineProperty(player, 'switchQuality', {
-        value: (url, name = 'unknown') => {
-            if (url !== option.url) {
-                const { currentTime, playing } = player;
-                return player.attachUrl(url).then(() => {
-                    option.url = url;
-                    player.playbackRateRemove();
-                    player.aspectRatioRemove();
-                    art.once('video:canplay', () => {
-                        player.currentTime = currentTime;
-                    });
-                    if (playing) {
-                        player.play();
-                    }
-                    notice.show(`${i18n.get('Switch video')}: ${name}`);
-                    art.emit('switch', url);
-                });
+export default function switchMix(art, player) {
+    const { i18n, notice } = art;
+
+    function switchUrl(url, name, currentTime) {
+        if (url === player.url) return;
+        URL.revokeObjectURL(player.url);
+        const { playing } = player;
+        player.url = url;
+        art.once('video:canplay', () => {
+            player.playbackRate = false;
+            player.aspectRatio = false;
+            player.flip = 'normal';
+            player.autoSize = true;
+            player.currentTime = currentTime;
+            if (playing) {
+                player.play = true;
             }
-            return null;
+        });
+        if (name) {
+            notice.show = `${i18n.get('Switch video')}: ${name}`;
+        }
+        art.emit('switch', url);
+    }
+
+    def(player, 'switchQuality', {
+        value: (url, name) => {
+            return switchUrl(url, name, player.currentTime);
         },
     });
 
-    Object.defineProperty(player, 'switchUrl', {
-        value: (url, name = 'unknown') => {
-            if (url !== option.url) {
-                const { playing } = player;
-                return player.attachUrl(url).then(() => {
-                    option.url = url;
-                    player.playbackRateRemove();
-                    player.aspectRatioRemove();
-                    player.currentTime = 0;
-                    if (playing) {
-                        player.play();
-                    }
-                    notice.show(`${i18n.get('Switch video')}: ${name}`);
-                    art.emit('switch', url);
-                });
-            }
-            return null;
+    def(player, 'switchUrl', {
+        value: (url, name) => {
+            return switchUrl(url, name, 0);
         },
     });
 }

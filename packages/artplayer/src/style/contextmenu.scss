@@ -1,5 +1,5 @@
-.artplayer-video-player {
-    .artplayer-contextmenu {
+.art-video-player {
+    .art-contextmenus {
         display: none;
         flex-direction: column;
         position: absolute;
@@ -8,36 +8,37 @@
         top: 0;
         min-width: 200px;
         padding: 5px 0;
-        background:rgba(0, 0, 0, 0.8);
+        background: rgba(0, 0, 0, 0.9);
         border-radius: 3px;
 
         .art-contextmenu {
             cursor: pointer;
-            font-size: 13px;
+            font-size: 12px;
             display: block;
             color: #fff;
-            padding: 7px 10px;
+            padding: 10px 15px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-            border-bottom: 1px solid rgba(255,255,255,.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
             a {
                 color: #fff;
                 text-decoration: none;
             }
-    
+
             span {
                 display: inline-block;
                 padding: 0 7px;
-                &:hover, &.current {
+                &:hover,
+                &.art-current {
                     color: #00c9ff;
                 }
             }
 
             &:hover {
-                background-color: rgba(255,255,255,.1);
+                background-color: rgba(255, 255, 255, 0.1);
             }
 
             &:last-child {
@@ -46,8 +47,8 @@
         }
     }
 
-    &.artplayer-contextmenu-show {
-        .artplayer-contextmenu {
+    &.art-contextmenu-show {
+        .art-contextmenus {
             display: flex;
         }
     }

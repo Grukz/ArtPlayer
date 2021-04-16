@@ -1,6 +1,6 @@
 {
   "name": "artplayer-plugin-gif",
-  "version": "3.1.9",
+  "version": "3.5.27",
   "expose": "artplayerPluginGif",
   "description": "Gif plugin for ArtPlayer",
   "main": "dist/artplayer-plugin-gif.js",
@@ -25,5 +25,6 @@
     "b64-to-blob": "^1.2.19",
     "blob-util": "^2.0.2",
     "gifshot": "^0.4.5"
-  }
+  },
+  "gitHead": "5ea211ef738351668e4acace326af4ff6947e2ee"
 }

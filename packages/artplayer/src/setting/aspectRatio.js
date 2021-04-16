@@ -1,10 +1,10 @@
-import { inverseClass } from '../utils';
+import { inverseClass, queryAll } from '../utils';
 
-export default function aspectRatio(settingOption) {
+export default function aspectRatio(option) {
     return art => {
         const { i18n, player } = art;
         return {
-            ...settingOption,
+            ...option,
             html: `
                 <div class="art-setting-header">${i18n.get('Aspect ratio')}</div>
                 <div class="art-setting-radio">
@@ -19,18 +19,18 @@ export default function aspectRatio(settingOption) {
                     </div>
                 </div>
             `,
-            click: event => {
+            click: (setting, event) => {
                 const { value } = event.target.dataset;
                 if (value) {
-                    player.aspectRatio(value);
+                    player.aspectRatio = value;
                 }
             },
             mounted: $setting => {
-                art.on('aspectRatioChange', ratio => {
-                    const $current = Array.from($setting.querySelectorAll('button')).find(
-                        item => item.dataset.value === ratio,
-                    );
-                    inverseClass($current.parentElement, 'current');
+                art.on('aspectRatio', ratio => {
+                    const $current = queryAll('button', $setting).find(item => item.dataset.value === ratio);
+                    if ($current) {
+                        inverseClass($current.parentElement, 'current');
+                    }
                 });
             },
         };

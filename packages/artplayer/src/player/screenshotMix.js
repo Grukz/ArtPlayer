@@ -1,4 +1,4 @@
-import { secondToTime, downloadFile } from '../utils';
+import { secondToTime, download, def } from '../utils';
 
 export default function screenshotMix(art, player) {
     const {
@@ -7,47 +7,46 @@ export default function screenshotMix(art, player) {
         template: { $video },
     } = art;
 
-    Object.defineProperty(player, 'getScreenshotDataURL', {
-        value: () => {
-            try {
-                const canvas = document.createElement('canvas');
-                canvas.width = $video.videoWidth;
-                canvas.height = $video.videoHeight;
-                canvas.getContext('2d').drawImage($video, 0, 0);
-                return canvas.toDataURL('image/png');
-            } catch (error) {
-                notice.show(error);
-                console.warn(error);
-                return null;
-            }
-        },
-    });
+    const $canvas = document.createElement('canvas');
 
-    Object.defineProperty(player, 'getScreenshotBlobUrl', {
+    def(player, 'getDataURL', {
         value: () =>
             new Promise((resolve, reject) => {
                 try {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = $video.videoWidth;
-                    canvas.height = $video.videoHeight;
-                    canvas.getContext('2d').drawImage($video, 0, 0);
-                    canvas.toBlob(blob => {
-                        resolve(URL.createObjectURL(blob));
-                    });
-                } catch (error) {
-                    notice.show(error);
-                    reject(error);
+                    $canvas.width = $video.videoWidth;
+                    $canvas.height = $video.videoHeight;
+                    $canvas.getContext('2d').drawImage($video, 0, 0);
+                    resolve($canvas.toDataURL('image/png'));
+                } catch (err) {
+                    notice.show = err;
+                    reject(err);
                 }
             }),
     });
 
-    Object.defineProperty(player, 'screenshot', {
+    def(player, 'getBlobUrl', {
+        value: () =>
+            new Promise((resolve, reject) => {
+                try {
+                    $canvas.width = $video.videoWidth;
+                    $canvas.height = $video.videoHeight;
+                    $canvas.getContext('2d').drawImage($video, 0, 0);
+                    $canvas.toBlob((blob) => {
+                        resolve(URL.createObjectURL(blob));
+                    });
+                } catch (err) {
+                    notice.show = err;
+                    reject(err);
+                }
+            }),
+    });
+
+    def(player, 'screenshot', {
         value: () => {
-            const dataUri = player.getScreenshotDataURL();
-            if (dataUri) {
-                downloadFile(dataUri, `${option.title || 'artplayer'}_${secondToTime($video.currentTime)}.png`);
+            player.getDataURL().then((dataUri) => {
+                download(dataUri, `${option.title || 'artplayer'}_${secondToTime($video.currentTime)}.png`);
                 art.emit('screenshot', dataUri);
-            }
+            });
         },
     });
 }

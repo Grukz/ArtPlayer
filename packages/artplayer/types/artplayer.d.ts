@@ -1,153 +1,66 @@
+type Component = {
+    html: string | HTMLElement;
+    disable?: boolean;
+    name?: string;
+    index?: number;
+    style?: object;
+    click?: Function;
+    mounted?: Function;
+    tooltip?: string;
+    position?: 'top' | 'left' | 'right';
+    selector?: {
+        name: string;
+    }[];
+    onSelect?: Function;
+};
+
 export default class Artplayer {
     constructor(option: {
-        /**
-         * Selector or a dom element (required)
-         */
-        container: string | Element;
-
-        /**
-         * Video url or a function that returns a promise value of url (required)
-         */
-        url: string | Function;
-
-        /**
-         * Video cover url
-         */
+        container: string | HTMLElement;
+        url: string;
         poster?: string;
-
-        /**
-         * Video title
-         */
         title?: string;
-
-        /**
-         * Theme color like: #fff
-         */
         theme?: string;
-
-        /**
-         * Display language
-         */
         lang?: 'en' | 'zh-cn' | 'zh-tw';
-
-        /**
-         * Initialize volume 0 ~ 1, will be overwritten by cached values
-         */
         volume?: number;
-
-        /**
-         * Whether to live by default
-         */
         isLive?: boolean;
-
-        /**
-         * Whether to mute by default
-         */
         muted?: boolean;
-
-        /**
-         * Whether to autoplay by default
-         */
         autoplay?: boolean;
-
-        /**
-         * Whether to automatically adapt to the size of the container
-         */
         autoSize?: boolean;
-
-        /**
-         * Whether to loop
-         */
+        autoMini?: boolean;
         loop?: boolean;
-
-        /**
-         * Whether to display flip button
-         */
         flip?: boolean;
-
-        /**
-         * Whether to display playbackRate button
-         */
+        rotate?: boolean;
         playbackRate?: boolean;
-
-        /**
-         * Whether to display aspectRatio option
-         */
         aspectRatio?: boolean;
-
-        /**
-         * Whether to display screenshot button
-         */
         screenshot?: boolean;
-
-        /**
-         * Whether to display setting button
-         */
         setting?: boolean;
-
-        /**
-         * Whether to use hotkey
-         */
         hotkey?: boolean;
-
-        /**
-         * Whether to display pip button
-         */
         pip?: boolean;
-
-        /**
-         * Whether to play mutually exclusive when multiple players
-         */
         mutex?: boolean;
-
-        /**
-         * Whether to display fullscreen button
-         */
+        light?: boolean;
+        backdrop?: boolean;
         fullscreen?: boolean;
-
-        /**
-         * Whether to display web fullscreen button
-         */
         fullscreenWeb?: boolean;
-
-        /**
-         * Initialize the custom layer
-         */
-        layers?: object[];
-
-        /**
-         * Initialize the custom contextmenu
-         */
-        contextmenu?: object[];
-
-        /**
-         * Initialize the custom quality
-         */
-        quality?: object[];
-
-        /**
-         * Initialize the custom controls
-         */
-        controls?: object[];
-
-        /**
-         * Initialize the custom highlight
-         */
-        highlight?: object[];
-
-        /**
-         * Initialize the custom plugins
-         */
+        subtitleOffset?: boolean;
+        miniProgressBar?: boolean;
+        localVideo?: boolean;
+        localSubtitle?: boolean;
+        networkMonitor?: boolean;
         plugins?: Function[];
-
-        /**
-         * Initialize the custom whitelist
-         */
-        whitelist?: [string, Function];
-
-        /**
-         * Thumbnails option
-         */
+        whitelist?: (string | Function | RegExp)[];
+        layers?: Component[];
+        contextmenu?: Component[];
+        controls?: Component[];
+        quality?: {
+            default?: boolean;
+            name: string;
+            url: string;
+        }[];
+        highlight?: {
+            time: number;
+            text: string;
+        }[];
         thumbnails?: {
             url: string;
             number?: number;
@@ -155,30 +68,16 @@ export default class Artplayer {
             height?: number;
             column?: number;
         };
-
-        /**
-         * Subtitle option
-         */
         subtitle?: {
             url: string;
             style: object;
+            encoding: string,
+            bilingual: boolean,
         };
-
-        /**
-         * More video attributes
-         */
         moreVideoAttr?: object;
-
-        /**
-         * Custom icon
-         */
         icons?: {
-            [propName: string]: string;
+            [propName: string]: string | HTMLElement;
         };
-
-        /**
-         * Custom video type
-         */
         customType?: {
             [propName: string]: Function;
         };

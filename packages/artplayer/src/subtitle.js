@@ -1,97 +1,141 @@
-import { setStyles, srtToVtt, vttToBlob } from './utils';
+import {
+    setStyle,
+    setStyles,
+    srtToVtt,
+    vttToBlob,
+    getExt,
+    assToVtt,
+    addClass,
+    escape,
+    removeClass,
+    hasClass,
+} from './utils';
+import Component from './utils/component';
 
-export default class Subtitle {
+export default class Subtitle extends Component {
     constructor(art) {
-        this.art = art;
-        this.state = true;
-        const { url } = this.art.option.subtitle;
-        if (url) {
-            this.init(url);
+        super(art);
+
+        this.name = 'subtitle';
+
+        const {
+            option: { subtitle },
+            template: { $subtitle },
+        } = art;
+
+        setStyles($subtitle, subtitle.style);
+
+        if (subtitle.url) {
+            this.init(subtitle.url);
+        }
+
+        if (subtitle.bilingual) {
+            addClass($subtitle, 'art-bilingual');
         }
     }
 
-    init(url) {
-        const {
-            events: { proxy },
-            option: { subtitle },
-            template: { $video, $subtitle, $track },
-        } = this.art;
+    get url() {
+        return this.art.template.$track.src;
+    }
 
-        setStyles($subtitle, subtitle.style || {});
+    get textTrack() {
+        return this.art.template.$video.textTracks[0];
+    }
 
-        if (!$track) {
-            const $newTrack = document.createElement('track');
-            $newTrack.default = true;
-            $newTrack.kind = 'metadata';
-            $video.appendChild($newTrack);
-            this.art.template.$track = $newTrack;
+    get activeCue() {
+        return this.textTrack.activeCues[0];
+    }
+
+    get bilingual() {
+        const { $subtitle } = this.art.template;
+        return hasClass($subtitle, 'art-bilingual');
+    }
+
+    set bilingual(val) {
+        const { $subtitle } = this.art.template;
+        if (val) {
+            addClass($subtitle, 'art-bilingual');
+        } else {
+            removeClass($subtitle, 'art-bilingual');
         }
+    }
 
-        this.load(url).then(url => {
-            this.art.template.$track.src = url;
-            this.art.emit('subtitle:load', url);
-            
-            if ($video.textTracks && $video.textTracks[0]) {
-                const [track] = $video.textTracks;
-                proxy(track, 'cuechange', () => {
-                    const [cue] = track.activeCues;
-                    $subtitle.innerHTML = '';
-                    if (cue) {
-                        const template = document.createElement('div');
-                        template.appendChild(cue.getCueAsHTML());
-                        $subtitle.innerHTML = template.innerHTML
-                            .split(/\r?\n/)
-                            .map(item => `<p>${item}</p>`)
-                            .join('');
-                    }
-                    this.art.emit('subtitle:update', $subtitle);
-                });
+    style(key, value) {
+        const { $subtitle } = this.art.template;
+        if (typeof key === 'object') {
+            return setStyles($subtitle, key);
+        }
+        return setStyle($subtitle, key, value);
+    }
+
+    update() {
+        const { $subtitle } = this.art.template;
+        $subtitle.innerHTML = '';
+        if (this.activeCue) {
+            $subtitle.innerHTML = this.activeCue.text
+                .split(/\r?\n/)
+                .map((item) => `<p>${escape(item)}</p>`)
+                .join('');
+            this.art.emit('subtitleUpdate', this.activeCue.text);
+        }
+    }
+
+    switch(url, opt = {}) {
+        const { i18n, notice } = this.art;
+        return this.init(url, opt).then((subUrl) => {
+            if (opt.name) {
+                notice.show = `${i18n.get('Switch subtitle')}: ${opt.name}`;
             }
+            this.art.emit('subtitleSwitch', subUrl);
+            return subUrl;
         });
     }
 
-    load(url) {
-        const { notice } = this.art;
-        let type;
-        return fetch(url)
-            .then(response => {
-                type = response.headers.get('Content-Type');
-                return response.text();
-            })
-            .then(text => {
-                let vttUrl = '';
-                if (/x-subrip/gi.test(type)) {
-                    vttUrl = vttToBlob(srtToVtt(text));
-                } else {
-                    vttUrl = url;
-                }
-                return vttUrl;
-            })
-            .catch(err => {
-                notice.show(err);
-                console.warn(err);
-            });
-    }
+    init(url, opt = {}) {
+        const {
+            notice,
+            events: { proxy },
+            option: { subtitle },
+            template: { $subtitle, $video, $track },
+        } = this.art;
 
-    show() {
-        const { $player } = this.art.template;
-        this.state = true;
-        $player.classList.remove('artplayer-subtitle-hide');
-        this.art.emit('subtitle:show');
-    }
-
-    hide() {
-        const { $player } = this.art.template;
-        this.state = false;
-        $player.classList.add('artplayer-subtitle-hide');
-        this.art.emit('subtitle:hide');
-    }
-
-    toggle() {
-        if (this.state) {
-            this.hide();
-        } else {
-            this.show();
+        if (!$track) {
+            const $track = document.createElement('track');
+            $track.default = true;
+            $track.kind = 'metadata';
+            $video.appendChild($track);
+            this.art.template.$track = $track;
+            proxy(this.textTrack, 'cuechange', this.update.bind(this));
         }
+
+        return fetch(url)
+            .then((response) => response.arrayBuffer())
+            .then((buffer) => {
+                const decoder = new TextDecoder(opt.encoding || subtitle.encoding);
+                const text = decoder.decode(buffer);
+
+                this.art.emit('subtitleLoad', url);
+                switch (opt.ext || getExt(url)) {
+                    case 'srt':
+                        return vttToBlob(srtToVtt(text));
+                    case 'ass':
+                        return vttToBlob(assToVtt(text));
+                    case 'vtt':
+                        return vttToBlob(text);
+                    default:
+                        return url;
+                }
+            })
+            .then((subUrl) => {
+                $subtitle.innerHTML = '';
+                if (this.url === subUrl) return subUrl;
+                URL.revokeObjectURL(this.url);
+                this.art.template.$track.src = subUrl;
+                return subUrl;
+            })
+            .catch((err) => {
+                notice.show = err;
+                throw err;
+            });
     }
 }

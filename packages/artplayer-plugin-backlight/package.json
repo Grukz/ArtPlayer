@@ -1,6 +1,6 @@
 {
   "name": "artplayer-plugin-backlight",
-  "version": "3.1.9",
+  "version": "3.5.27",
   "expose": "artplayerPluginBacklight",
   "description": "Backlight plugin for ArtPlayer",
   "main": "dist/artplayer-plugin-backlight.js",
@@ -20,5 +20,6 @@
   "bugs": {
     "url": "https://github.com/zhw2590582/ArtPlayer/issues"
   },
-  "homepage": "https://github.com/zhw2590582/ArtPlayer#readme"
+  "homepage": "https://github.com/zhw2590582/ArtPlayer#readme",
+  "gitHead": "5ea211ef738351668e4acace326af4ff6947e2ee"
 }

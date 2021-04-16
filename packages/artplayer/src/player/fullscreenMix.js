@@ -1,76 +1,81 @@
 import screenfull from 'screenfull';
+import { addClass, removeClass, def } from '../utils';
+
+const nativeScreenfull = (art, player) => {
+    const { $player } = art.template;
+
+    def(player, 'fullscreen', {
+        get() {
+            return screenfull.isFullscreen;
+        },
+        set(value) {
+            if (value) {
+                screenfull.request($player).then(() => {
+                    addClass($player, 'art-fullscreen');
+                    player.aspectRatioReset = true;
+                    art.emit('resize');
+                    art.emit('fullscreen', true);
+                });
+            } else {
+                screenfull.exit().then(() => {
+                    removeClass($player, 'art-fullscreen');
+                    player.aspectRatioReset = true;
+                    player.autoSize = art.option.autoSize;
+                    art.emit('resize');
+                    art.emit('fullscreen');
+                });
+            }
+        },
+    });
+};
+
+const webkitScreenfull = (art, player) => {
+    const { $video } = art.template;
+
+    def(player, 'fullscreen', {
+        get() {
+            return $video.webkitDisplayingFullscreen;
+        },
+        set(value) {
+            if (value) {
+                $video.webkitEnterFullscreen();
+                art.emit('fullscreen', true);
+            } else {
+                $video.webkitExitFullscreen();
+                art.emit('fullscreen');
+            }
+        },
+    });
+};
 
 export default function fullscreenMix(art, player) {
     const {
         i18n,
         notice,
-        events: { destroyEvents },
-        template: { $player },
+        template: { $video },
     } = art;
 
-    const screenfullChange = () => {
-        art.emit('fullscreen:change', screenfull.isFullscreen);
-    };
-
-    const screenfullError = () => {
-        notice.show(i18n.get('This does not seem to support full screen functionality'));
-    };
-
-    try {
-        screenfull.on('change', screenfullChange);
-        screenfull.on('error', screenfullError);
-        destroyEvents.push(() => {
-            screenfull.off('change', screenfullChange);
-            screenfull.off('error', screenfullError);
-        });
-    } catch (error) {
-        screenfullError();
-    }
-
-    Object.defineProperty(player, 'fullscreenState', {
-        get: () => screenfull.isFullscreen,
+    art.once('ready', () => {
+        if (screenfull.isEnabled) {
+            nativeScreenfull(art, player);
+        } else if ($video.webkitSupportsFullscreen) {
+            webkitScreenfull(art, player);
+        } else {
+            def(player, 'fullscreen', {
+                get() {
+                    return false;
+                },
+                set() {
+                    notice.show = i18n.get('Fullscreen not supported');
+                },
+            });
+        }
     });
 
-    Object.defineProperty(player, 'fullscreenEnabled', {
-        value: () => {
-            if (screenfull.enabled) {
-                if (!player.fullscreenState) {
-                    player.fullscreenWebExit();
-                    screenfull.request($player).then(() => {
-                        $player.classList.add('artplayer-fullscreen');
-                        player.aspectRatioReset();
-                        art.emit('fullscreen:enabled');
-                    });
-                }
-            } else {
-                screenfullError();
-            }
-        },
-    });
-
-    Object.defineProperty(player, 'fullscreenExit', {
-        value: () => {
-            if (screenfull.enabled) {
-                if (player.fullscreenState) {
-                    player.fullscreenWebExit();
-                    screenfull.exit().then(() => {
-                        $player.classList.remove('artplayer-fullscreen');
-                        player.aspectRatioReset();
-                        art.emit('fullscreen:exit');
-                    });
-                }
-            } else {
-                screenfullError();
-            }
-        },
-    });
-
-    Object.defineProperty(player, 'fullscreenToggle', {
-        value: () => {
-            if (player.fullscreenState) {
-                player.fullscreenExit();
-            } else {
-                player.fullscreenEnabled();
+    def(player, 'fullscreenToggle', {
+        set(value) {
+            if (value) {
+                player.fullscreen = !player.fullscreen;
             }
         },
     });

@@ -1,10 +1,10 @@
-export default function info(menuOption) {
+export default function info(option) {
     return art => ({
-        ...menuOption,
+        ...option,
         html: art.i18n.get('Video info'),
-        click: () => {
-            art.info.show();
-            art.contextmenu.hide();
+        click: contextmenu => {
+            art.info.show = true;
+            contextmenu.show = false;
         },
     });
 }

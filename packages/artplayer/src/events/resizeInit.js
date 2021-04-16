@@ -1,24 +1,17 @@
-import { ResizeObserver } from 'resize-observer';
+import { throttle } from '../utils';
 
 export default function resizeInit(art, events) {
-    const {
-        option,
-        template: { $player },
-    } = art;
-    
-    const resizeObserver = new ResizeObserver(() => {
-        if (option.autoSize) {
-            if (!art.player.fullscreenState && !art.player.fullscreenWebState && !art.player.pipState) {
-                art.player.autoSize();
-            } else {
-                art.player.autoSizeRemove();
-            }
+    const { option, player } = art;
+
+    const resizeFn = throttle(() => {
+        if (player.normalSize) {
+            player.autoSize = option.autoSize;
         }
-        art.player.aspectRatioReset();
-        art.emit('resize', $player);
-    });
-    resizeObserver.observe($player);
-    events.destroyEvents.push(() => {
-        resizeObserver.unobserve($player);
+        player.aspectRatioReset = true;
+        art.emit('resize');
+    }, 500);
+
+    events.proxy(window, ['orientationchange', 'resize'], () => {
+        resizeFn();
     });
 }

@@ -1,10 +1,9 @@
 {
   "name": "artplayer",
-  "version": "3.1.9",
+  "version": "3.5.27",
   "expose": "Artplayer",
-  "description": "ArtPlayer is a modern HTML5 video player",
+  "description": "ArtPlayer.js is a modern and full featured HTML5 video player",
   "main": "dist/artplayer.js",
-  "style": "dist/artplayer.css",
   "types": "types/artplayer.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -24,11 +23,8 @@
   },
   "homepage": "https://github.com/zhw2590582/ArtPlayer#readme",
   "dependencies": {
-    "balloon-css": "^0.5.0",
-    "draggabilly": "^2.2.0",
-    "option-validator": "^1.1.1",
-    "resize-observer": "^1.0.0",
-    "screenfull": "^4.2.0",
-    "tiny-emitter": "^2.1.0"
-  }
+    "option-validator": "^2.0.6",
+    "screenfull": "^5.0.2"
+  },
+  "gitHead": "5ea211ef738351668e4acace326af4ff6947e2ee"
 }

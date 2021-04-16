@@ -3,9 +3,10 @@ import { clamp } from '../utils';
 export default function attrInit(art, player) {
     const {
         option,
+        storage,
         template: { $video },
     } = art;
-    
+
     Object.keys(option.moreVideoAttr).forEach(key => {
         $video[key] = option.moreVideoAttr[key];
     });
@@ -13,9 +14,14 @@ export default function attrInit(art, player) {
     if (option.muted) {
         $video.muted = option.muted;
     }
-    
+
     if (option.volume) {
         $video.volume = clamp(option.volume, 0, 1);
+    }
+
+    const volume = storage.get('volume');
+    if (volume) {
+        $video.volume = clamp(volume, 0, 1);
     }
 
     if (option.poster) {
@@ -26,5 +32,6 @@ export default function attrInit(art, player) {
         $video.autoplay = option.autoplay;
     }
 
-    player.attachUrl(option.url);
+    $video.controls = false;
+    player.url = option.url;
 }

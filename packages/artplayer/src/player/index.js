@@ -1,8 +1,9 @@
-import attachUrlMix from './attachUrlMix';
+import urlMix from './urlMix';
 import attrInit from './attrInit';
 import eventInit from './eventInit';
+import exclusiveInit from './exclusiveInit';
 import playMix from './playMix';
-import pauseMin from './pauseMin';
+import pauseMix from './pauseMix';
 import toggleMix from './toggleMix';
 import seekMix from './seekMix';
 import volumeMix from './volumeMix';
@@ -14,6 +15,7 @@ import aspectRatioMix from './aspectRatioMix';
 import screenshotMix from './screenshotMix';
 import fullscreenMix from './fullscreenMix';
 import fullscreenWebMix from './fullscreenWebMix';
+import fullscreenRotateMix from './fullscreenRotateMix';
 import pipMix from './pipMix';
 import loadedMix from './loadedMix';
 import playedMix from './playedMix';
@@ -21,14 +23,20 @@ import playingMix from './playingMix';
 import autoSizeMix from './autoSizeMix';
 import rectMix from './rectMix';
 import flipMix from './flipMix';
+import lightMix from './lightMix';
+import miniMix from './miniMix';
+import loopMin from './loopMin';
+import rotateMix from './rotateMix';
+import { proxyPropertys } from '../utils';
 
 export default class Player {
     constructor(art) {
-        attachUrlMix(art, this);
+        urlMix(art, this);
         eventInit(art, this);
         attrInit(art, this);
+        exclusiveInit(art, this);
         playMix(art, this);
-        pauseMin(art, this);
+        pauseMix(art, this);
         toggleMix(art, this);
         seekMix(art, this);
         volumeMix(art, this);
@@ -40,6 +48,7 @@ export default class Player {
         screenshotMix(art, this);
         fullscreenMix(art, this);
         fullscreenWebMix(art, this);
+        fullscreenRotateMix(art, this);
         pipMix(art, this);
         loadedMix(art, this);
         playedMix(art, this);
@@ -47,6 +56,10 @@ export default class Player {
         autoSizeMix(art, this);
         rectMix(art, this);
         flipMix(art, this);
-    
+        lightMix(art, this);
+        miniMix(art, this);
+        loopMin(art, this);
+        rotateMix(art, this);
+        proxyPropertys(art, this);
     }
 }

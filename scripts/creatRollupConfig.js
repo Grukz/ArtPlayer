@@ -9,8 +9,10 @@ const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
 const replace = require('rollup-plugin-replace');
 const svgo = require('rollup-plugin-svgo');
-const { uglify } = require('rollup-plugin-uglify');
+const { sizeSnapshot } = require('rollup-plugin-size-snapshot');
+const { terser } = require('rollup-plugin-terser');
 const copyAfterBuild = require('./copyAfterBuild');
+const removeHtmlSpace = require('./removeHtmlSpace');
 const json = require('rollup-plugin-json');
 
 module.exports = function creatRollupConfig(projectPath) {
@@ -35,27 +37,35 @@ module.exports = function creatRollupConfig(projectPath) {
             format: 'umd',
             sourcemap: isProd ? false : true,
         },
-        exclude: ['node_modules/**', 'packages/**/node_modules/**'],
+        watch: {
+            exclude: ['node_modules/**', 'packages/**/node_modules/**'],
+        },
         plugins: [
             json({
                 exclude: ['node_modules/**', 'packages/**/node_modules/**'],
             }),
             eslint({
-                exclude: ['node_modules/**', 'packages/*/src/**/*.scss', 'packages/*/src/**/*.svg', 'packages/*/src/**/*.json'],
+                exclude: [
+                    'node_modules/**',
+                    'packages/*/src/**/*.scss',
+                    'packages/*/src/**/*.svg',
+                    'packages/*/src/**/*.json',
+                ],
             }),
             postcss({
                 plugins: [
-                    autoprefixer({
-                        browsers: ['last 2 versions'],
-                    }),
+                    autoprefixer(),
                     cssnano({
-                        preset: 'default',
+                        preset: [
+                            'default',
+                            {
+                                calc: false,
+                            },
+                        ],
                     }),
                 ],
                 sourceMap: isProd ? false : true,
-                extract: isProd
-                    ? path.join(projectPath, `dist/${name}.css`)
-                    : path.join(process.cwd(), `docs/uncompiled/${name}.css`),
+                extract: false,
             }),
             nodeResolve(),
             commonjs(),
@@ -63,10 +73,7 @@ module.exports = function creatRollupConfig(projectPath) {
                 runtimeHelpers: true,
                 exclude: ['node_modules/**', 'packages/**/node_modules/**'],
                 presets: [['@babel/env', { modules: false }]],
-                plugins: [
-                    '@babel/plugin-external-helpers',
-                    '@babel/plugin-transform-runtime',
-                ],
+                plugins: ['@babel/plugin-external-helpers', '@babel/plugin-transform-runtime'],
             }),
             svgo({
                 raw: true,
@@ -76,10 +83,15 @@ module.exports = function creatRollupConfig(projectPath) {
                 __ENV__: JSON.stringify(process.env.NODE_ENV || 'development'),
                 __VERSION__: version,
             }),
+            isProd && sizeSnapshot(),
+            isProd && removeHtmlSpace(),
             isProd &&
-                uglify({
+                terser({
                     output: {
                         preamble: banner,
+                        comments: function () {
+                            return false;
+                        },
                     },
                 }),
             isProd &&

@@ -13,16 +13,16 @@ export default function miniProgressBar(art) {
             left: 0,
             right: 0,
             bottom: 0,
-            height: '3px',
+            height: '2px',
             background: theme,
         },
         mounted($progressBar) {
-            art.on('controls:show', () => {
-                $progressBar.style.display = 'none';
+            art.on('control', value => {
+                $progressBar.style.display = value ? 'none' : 'block';
             });
 
-            art.on('controls:hide', () => {
-                $progressBar.style.display = 'block';
+            art.on('destroy', () => {
+                $progressBar.style.display = 'none';
             });
 
             art.on('video:timeupdate', () => {

@@ -1,10 +1,9 @@
 {
   "name": "artplayer-vue",
-  "version": "3.1.9",
+  "version": "3.5.27",
   "expose": "ArtplayerVue",
   "description": "Vue Component for Artplayer",
   "main": "dist/artplayer-vue.js",
-  "style": "dist/artplayer-vue.css",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,7 +21,5 @@
     "url": "https://github.com/zhw2590582/ArtPlayer/issues"
   },
   "homepage": "https://github.com/zhw2590582/ArtPlayer#readme",
-  "dependencies": {
-    "artplayer": "latest"
-  }
+  "gitHead": "5ea211ef738351668e4acace326af4ff6947e2ee"
 }

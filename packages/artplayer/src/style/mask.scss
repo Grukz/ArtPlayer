@@ -1,5 +1,5 @@
-.artplayer-video-player {
-    .artplayer-mask {
+.art-video-player {
+    .art-mask {
         display: none;
         align-items: center;
         justify-content: center;
@@ -13,7 +13,7 @@
         height: 100%;
         overflow: hidden;
         pointer-events: none;
-    
+
         .art-state {
             display: flex;
             justify-content: center;
@@ -23,12 +23,12 @@
             bottom: 55px;
             width: 60px;
             height: 60px;
-            opacity: .6;
+            opacity: 0.6;
         }
     }
 
-    &.artplayer-mask-show {
-        .artplayer-mask {
+    &.art-mask-show {
+        .art-mask {
             display: flex;
         }
     }

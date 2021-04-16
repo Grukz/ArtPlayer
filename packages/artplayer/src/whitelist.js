@@ -1,28 +1,22 @@
 export default class Whitelist {
     constructor(art) {
-        const { kindOf } = art.constructor;
-        const { whitelist } = art.option;
-        this.userAgent = window.navigator.userAgent;
-        this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(this.userAgent);
+        const {
+            constructor: { kindOf },
+            option: { whitelist },
+        } = art;
         this.state =
-            !this.isMobile ||
-            whitelist.some(item => {
-                const type = kindOf(item);
-                let result = false;
-                switch (type) {
+            !art.isMobile ||
+            whitelist.some((item) => {
+                switch (kindOf(item)) {
                     case 'string':
-                        result = this.userAgent.indexOf(item) > -1;
-                        break;
+                        return item === '*' || art.userAgent.indexOf(item) > -1;
                     case 'function':
-                        result = item(this.userAgent);
-                        break;
+                        return item(art.userAgent);
                     case 'regexp':
-                        result = item.test(this.userAgent);
-                        break;
+                        return item.test(art.userAgent);
                     default:
-                        break;
+                        return false;
                 }
-                return result;
             });
     }
 }

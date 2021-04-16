@@ -1,40 +1,32 @@
+import { addClass, removeClass, hasClass, def } from '../utils';
+
 export default function fullscreenWebMix(art, player) {
-    const {
-        template: { $player },
-    } = art;
+    const { $player } = art.template;
 
-    Object.defineProperty(player, 'fullscreenWebState', {
-        get: () => $player.classList.contains('artplayer-web-fullscreen'),
-    });
-
-    Object.defineProperty(player, 'fullscreenWebEnabled', {
-        value: () => {
-            if (player.fullscreenState) {
-                player.fullscreenExit();
-            }
-            $player.classList.add('artplayer-web-fullscreen');
-            player.aspectRatioReset();
-            art.emit('fullscreenWeb:enabled');
+    def(player, 'fullscreenWeb', {
+        get() {
+            return hasClass($player, 'art-fullscreen-web');
         },
-    });
-
-    Object.defineProperty(player, 'fullscreenWebExit', {
-        value: () => {
-            if (player.fullscreenWebState) {
-                player.fullscreenExit();
-                $player.classList.remove('artplayer-web-fullscreen');
-                player.aspectRatioReset();
-                art.emit('fullscreenWeb:exit');
-            }
-        },
-    });
-
-    Object.defineProperty(player, 'fullscreenWebToggle', {
-        value: () => {
-            if (player.fullscreenWebState) {
-                player.fullscreenWebExit();
+        set(value) {
+            if (value) {
+                addClass($player, 'art-fullscreen-web');
+                player.aspectRatioReset = true;
+                art.emit('resize');
+                art.emit('fullscreenWeb', true);
             } else {
-                player.fullscreenWebEnabled();
+                removeClass($player, 'art-fullscreen-web');
+                player.aspectRatioReset = true;
+                player.autoSize = art.option.autoSize;
+                art.emit('resize');
+                art.emit('fullscreenWeb');
+            }
+        },
+    });
+
+    def(player, 'fullscreenWebToggle', {
+        set(value) {
+            if (value) {
+                player.fullscreenWeb = !player.fullscreenWeb;
             }
         },
     });

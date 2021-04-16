@@ -1,99 +1,70 @@
 import { errorHandle } from '../utils';
 
-function validElement(paths, value, type) {
-    return errorHandle(
-        type === 'string' || value instanceof Element,
-        `${paths.join('.')} require 'string' or 'Element' type`,
-    );
+const b = 'boolean';
+const s = 'string';
+const n = 'number';
+const o = 'object';
+const a = 'array';
+const f = 'function';
+const r = 'regexp';
+
+function validElement(value, type, paths) {
+    return errorHandle(type === s || value instanceof Element, `${paths.join('.')} require '${s}' or 'Element' type`);
 }
 
+const component = {
+    html: validElement,
+    disable: `?${b}`,
+    name: `?${s}`,
+    index: `?${n}`,
+    style: `?${o}`,
+    click: `?${f}`,
+    mounted: `?${f}`,
+    tooltip: `?${s}`,
+    selector: `?${a}`,
+    onSelect: `?${f}`,
+};
+
 export default {
-    container: {
-        validator: validElement,
-        required: true,
-    },
-    url: {
-        type: 'string|function',
-        required: true,
-    },
-    poster: 'string',
-    title: 'string',
-    theme: 'string',
-    lang: 'string',
-    volume: 'number',
-    isLive: 'boolean',
-    muted: 'boolean',
-    autoplay: 'boolean',
-    autoSize: 'boolean',
-    loop: 'boolean',
-    flip: 'boolean',
-    playbackRate: 'boolean',
-    aspectRatio: 'boolean',
-    screenshot: 'boolean',
-    setting: 'boolean',
-    hotkey: 'boolean',
-    pip: 'boolean',
-    mutex: 'boolean',
-    fullscreen: 'boolean',
-    fullscreenWeb: 'boolean',
-    plugins: {
-        type: 'array',
-        child: {
-            type: 'function',
-        },
-    },
-    whitelist: {
-        type: 'array',
-        child: {
-            type: 'string|function|regexp',
-        },
-    },
-    layers: {
-        type: 'array',
-        child: {
-            type: 'object|function',
-            disable: 'boolean',
-            name: 'string',
-            index: 'number',
-            html: validElement,
-            style: 'object',
-            click: 'function',
-            mounted: 'function',
-        },
-    },
-    contextmenu: {
-        type: 'array',
-        child: {
-            type: 'object|function',
-            disable: 'boolean',
-            name: 'string',
-            index: 'number',
-            html: validElement,
-            style: 'object',
-            click: 'function',
-            mounted: 'function',
-        },
-    },
-    quality: {
-        type: 'array',
-        child: {
-            default: 'boolean',
-            name: 'string',
-            url: 'string',
-        },
-    },
-    controls: {
-        type: 'array',
-        child: {
-            type: 'object|function',
-            disable: 'boolean',
-            name: 'string',
-            index: 'number',
-            html: validElement,
-            style: 'object',
-            click: 'function',
-            mounted: 'function',
-            position: (paths, value) => {
+    container: validElement,
+    url: s,
+    poster: s,
+    title: s,
+    theme: s,
+    lang: s,
+    volume: n,
+    isLive: b,
+    muted: b,
+    autoplay: b,
+    autoSize: b,
+    autoMini: b,
+    loop: b,
+    flip: b,
+    rotate: b,
+    playbackRate: b,
+    aspectRatio: b,
+    screenshot: b,
+    setting: b,
+    hotkey: b,
+    pip: b,
+    mutex: b,
+    light: b,
+    backdrop: b,
+    fullscreen: b,
+    fullscreenWeb: b,
+    subtitleOffset: b,
+    miniProgressBar: b,
+    localVideo: b,
+    localSubtitle: b,
+    networkMonitor: b,
+    plugins: [f],
+    whitelist: [`${s}|${f}|${r}`],
+    layers: [component],
+    contextmenu: [component],
+    controls: [
+        {
+            ...component,
+            position: (value, type, paths) => {
                 const position = ['top', 'left', 'right'];
                 return errorHandle(
                     position.includes(value),
@@ -101,33 +72,34 @@ export default {
                 );
             },
         },
-    },
-    highlight: {
-        type: 'array',
-        child: {
-            type: 'object',
-            time: 'number',
-            text: 'string',
+    ],
+    quality: [
+        {
+            default: `?${b}`,
+            name: s,
+            url: s,
         },
-    },
+    ],
+    highlight: [
+        {
+            time: n,
+            text: s,
+        },
+    ],
     thumbnails: {
-        type: 'object',
-        child: {
-            url: 'string',
-            number: 'number',
-            width: 'number',
-            height: 'number',
-            column: 'number',
-        },
+        url: s,
+        number: n,
+        width: n,
+        height: n,
+        column: n,
     },
     subtitle: {
-        type: 'object',
-        child: {
-            url: 'string',
-            style: 'object',
-        },
+        url: s,
+        style: o,
+        encoding: s,
+        bilingual: b,
     },
-    moreVideoAttr: 'object',
-    icons: 'object',
-    customType: 'object',
+    moreVideoAttr: o,
+    icons: o,
+    customType: o,
 };

@@ -1,5 +1,11 @@
+import { def } from '../utils';
+
 export default function durationMix(art, player) {
-    Object.defineProperty(player, 'duration', {
-        get: () => art.template.$video.duration || 0,
+    def(player, 'duration', {
+        get: () => {
+            const { duration } = art.template.$video;
+            if (duration === Infinity) return 0;
+            return duration || 0;
+        },
     });
 }

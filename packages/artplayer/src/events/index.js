@@ -1,7 +1,10 @@
+import { ArtPlayerError } from '../utils/error';
 import clickInit from './clickInit';
 import hoverInit from './hoverInit';
 import mousemoveInit from './mousemoveInit';
 import resizeInit from './resizeInit';
+import gestureInit from './gestureInit';
+import viewInit from './viewInit';
 
 export default class Events {
     constructor(art) {
@@ -9,29 +12,37 @@ export default class Events {
         this.proxy = this.proxy.bind(this);
         this.hover = this.hover.bind(this);
         this.loadImg = this.loadImg.bind(this);
-        art.once('video:canplay', () => {
-            clickInit(art, this);
-            hoverInit(art, this);
-            mousemoveInit(art, this);
-            resizeInit(art, this);
-        });
+
+        if (art.whitelist.state) {
+            art.once('ready', () => {
+                clickInit(art, this);
+                hoverInit(art, this);
+                mousemoveInit(art, this);
+                resizeInit(art, this);
+                gestureInit(art, this);
+                viewInit(art, this);
+            });
+        }
     }
 
     proxy(target, name, callback, option = {}) {
         if (Array.isArray(name)) {
-            name.forEach(item => this.proxy(target, item, callback, option));
-            return;
+            return name.map((item) => this.proxy(target, item, callback, option));
         }
 
         target.addEventListener(name, callback, option);
-        this.destroyEvents.push(() => {
-            target.removeEventListener(name, callback, option);
-        });
+        const destroy = () => target.removeEventListener(name, callback, option);
+        this.destroyEvents.push(destroy);
+        return destroy;
     }
 
     hover(target, mouseenter, mouseleave) {
-        this.proxy(target, 'mouseenter', mouseenter);
-        this.proxy(target, 'mouseleave', mouseleave);
+        if (mouseenter) {
+            this.proxy(target, 'mouseenter', mouseenter);
+        }
+        if (mouseleave) {
+            this.proxy(target, 'mouseleave', mouseleave);
+        }
     }
 
     loadImg(img) {
@@ -44,7 +55,7 @@ export default class Events {
                 image = new Image();
                 image.src = img;
             } else {
-                return reject(img);
+                return reject(new ArtPlayerError('Unable to get Image'));
             }
 
             if (image.complete) {
@@ -52,13 +63,13 @@ export default class Events {
             }
 
             this.proxy(image, 'load', () => resolve(image));
-            this.proxy(image, 'error', () => reject(image));
+            this.proxy(image, 'error', () => reject(new ArtPlayerError(`Failed to load Image: ${image.src}`)));
 
-            return img;
+            return resolve(image);
         });
     }
 
     destroy() {
-        this.destroyEvents.forEach(event => event());
+        this.destroyEvents.forEach((event) => event());
     }
 }

@@ -1,84 +1,63 @@
-import component from '../utils/component';
+import Component from '../utils/component';
 import flip from './flip';
+import rotate from './rotate';
 import aspectRatio from './aspectRatio';
 import playbackRate from './playbackRate';
 
-export default class Setting {
+export default class Setting extends Component {
     constructor(art) {
-        this.id = 0;
-        this.art = art;
-        this.state = false;
-        if (art.option.setting) {
-            this.art.once('video:canplay', () => {
-                this.init();
-            });
+        super(art);
 
-            this.art.on('blur', () => {
-                this.hide();
-            });
-        }
-    }
+        this.name = 'setting';
 
-    init() {
         const {
             option,
-            template: { $setting },
+            template: { $setting, $settingBody },
             events: { proxy },
-        } = this.art;
+        } = art;
 
-        proxy($setting, 'click', e => {
-            if (e.target === $setting) {
-                this.hide();
-            }
-        });
+        this.$parent = $settingBody;
 
-        this.add(
-            flip({
-                disable: !option.flip,
-                name: 'flip',
-            }),
-        );
+        if (option.setting) {
+            art.once('ready', () => {
+                proxy($setting, 'click', e => {
+                    if (e.target === $setting) {
+                        this.show = false;
+                    }
+                });
 
-        this.add(
-            aspectRatio({
-                disable: !option.aspectRatio,
-                name: 'aspectRatio',
-            }),
-        );
+                this.add(
+                    flip({
+                        disable: !option.flip,
+                        name: 'flip',
+                    }),
+                );
 
-        this.add(
-            playbackRate({
-                disable: !option.playbackRate,
-                name: 'playbackRate',
-            }),
-        );
-    }
+                this.add(
+                    rotate({
+                        disable: !option.rotate,
+                        name: 'rotate',
+                    }),
+                );
 
-    add(item, callback) {
-        this.id += 1;
-        const { $settingBody } = this.art.template;
-        return component(this.art, this, $settingBody, item, callback, 'setting');
-    }
+                this.add(
+                    aspectRatio({
+                        disable: !option.aspectRatio,
+                        name: 'aspectRatio',
+                    }),
+                );
 
-    show() {
-        const { $player } = this.art.template;
-        this.state = true;
-        $player.classList.add('artplayer-setting-show');
-        this.art.emit('setting:show');
-    }
+                this.add(
+                    playbackRate({
+                        disable: !option.playbackRate,
+                        name: 'playbackRate',
+                    }),
+                );
+            });
 
-    hide() {
-        const { $player } = this.art.template;
-        this.state = false;
-        $player.classList.remove('artplayer-setting-show');
-        this.art.emit('setting:hide');
-    }
-
-    toggle() {
-        if (this.state) {
-            this.hide();
-        } else {
-            this.show();
+            art.on('blur', () => {
+                this.show = false;
+            });
         }
     }
 }

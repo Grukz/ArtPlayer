@@ -1,4 +1,4 @@
-import { setStyle, errorHandle } from '../utils';
+import { setStyle, errorHandle, def } from '../utils';
 
 export default function aspectRatioMix(art, player) {
     const {
@@ -7,17 +7,21 @@ export default function aspectRatioMix(art, player) {
         notice,
     } = art;
 
-    Object.defineProperty(player, 'aspectRatioState', {
-        get: () => $player.dataset.aspectRatio || '',
-    });
+    def(player, 'aspectRatio', {
+        get() {
+            return $player.dataset.aspectRatio || '';
+        },
+        set(ratio) {
+            if (!ratio) ratio = 'default';
 
-    Object.defineProperty(player, 'aspectRatio', {
-        value: ratio => {
             const ratioList = ['default', '4:3', '16:9'];
             errorHandle(ratioList.includes(ratio), `'aspectRatio' only accept ${ratioList.toString()} as parameters`);
 
             if (ratio === 'default') {
-                player.aspectRatioRemove();
+                setStyle($video, 'width', null);
+                setStyle($video, 'height', null);
+                setStyle($video, 'padding', null);
+                delete $player.dataset.aspectRatio;
             } else {
                 const ratioArray = ratio.split(':');
                 const { videoWidth, videoHeight } = $video;
@@ -35,32 +39,19 @@ export default function aspectRatioMix(art, player) {
                     setStyle($video, 'height', `${percentage * 100}%`);
                     setStyle($video, 'padding', `${(clientHeight - clientHeight * percentage) / 2}px 0`);
                 }
+                $player.dataset.aspectRatio = ratio;
             }
 
-            $player.dataset.aspectRatio = ratio;
-            notice.show(`${i18n.get('Aspect ratio')}: ${ratio === 'default' ? i18n.get('Default') : ratio}`);
-            art.emit('aspectRatioChange', ratio);
+            notice.show = `${i18n.get('Aspect ratio')}: ${ratio === 'default' ? i18n.get('Default') : ratio}`;
+            art.emit('aspectRatio', ratio);
         },
     });
 
-    Object.defineProperty(player, 'aspectRatioRemove', {
-        value: () => {
-            if (player.aspectRatioState) {
-                setStyle($video, 'width', null);
-                setStyle($video, 'height', null);
-                setStyle($video, 'padding', null);
-                delete $player.dataset.aspectRatio;
-                art.emit('aspectRatioRemove');
-            }
-        },
-    });
-
-    Object.defineProperty(player, 'aspectRatioReset', {
-        value: () => {
-            const { aspectRatio } = $player.dataset;
-            if (aspectRatio) {
-                player.aspectRatio(aspectRatio);
-                art.emit('aspectRatioReset');
+    def(player, 'aspectRatioReset', {
+        set(value) {
+            if (value && player.aspectRatio) {
+                const { aspectRatio } = player;
+                player.aspectRatio = aspectRatio;
             }
         },
     });

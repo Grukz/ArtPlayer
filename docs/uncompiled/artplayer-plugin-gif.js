@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
   (global = global || self, global.artplayerPluginGif = factory());
-}(this, function () { 'use strict';
+}(this, (function () { 'use strict';
 
   function _defineProperty(obj, key, value) {
     if (key in obj) {
@@ -20,27 +20,6 @@
   }
 
   var defineProperty = _defineProperty;
-
-  function _objectSpread(target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i] != null ? arguments[i] : {};
-      var ownKeys = Object.keys(source);
-
-      if (typeof Object.getOwnPropertySymbols === 'function') {
-        ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
-          return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-        }));
-      }
-
-      ownKeys.forEach(function (key) {
-        defineProperty(target, key, source[key]);
-      });
-    }
-
-    return target;
-  }
-
-  var objectSpread = _objectSpread;
 
   var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -2860,7 +2839,7 @@
 
   var b64toBlob = createCommonjsModule(function (module) {
   (function(root, globalName, factory) {
-    if (module.exports) {
+    if ( module.exports) {
       // Node:
       module.exports = factory();
       // Use module export as simulated ES6 default export:
@@ -2897,7 +2876,25 @@
   }));
   });
 
-  function i18nMix(i18n) {
+  function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+  function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+  function artplayerPluginGif(art) {
+    var _art$constructor$util = art.constructor.utils,
+        errorHandle = _art$constructor$util.errorHandle,
+        clamp = _art$constructor$util.clamp,
+        downloadFile = _art$constructor$util.downloadFile;
+    var i18n = art.i18n,
+        notice = art.notice,
+        layers = art.layers,
+        player = art.player,
+        loading = art.loading,
+        _art$option = art.option,
+        theme = _art$option.theme,
+        title = _art$option.title,
+        proxy = art.events.proxy,
+        $video = art.template.$video;
     i18n.update({
       'zh-cn': {
         'Long press, gif length is between 1 second and 10 seconds': '长按，gif 长度为 1 ~ 10 秒',
@@ -2916,36 +2913,20 @@
         'Release the mouse to start': '放開鼠標即可開始'
       }
     });
-  }
-
-  function artplayerPluginGif(art) {
-    var _art$constructor$util = art.constructor.utils,
-        errorHandle = _art$constructor$util.errorHandle,
-        clamp = _art$constructor$util.clamp,
-        downloadImage = _art$constructor$util.downloadImage;
-    var i18n = art.i18n,
-        notice = art.notice,
-        layers = art.layers,
-        player = art.player,
-        loading = art.loading,
-        _art$option = art.option,
-        theme = _art$option.theme,
-        title = _art$option.title,
-        proxy = art.events.proxy,
-        $video = art.template.$video;
-    i18nMix(i18n);
+    var $progress = null;
     layers.add({
       name: 'artplayer-plugin-gif-progress',
       style: {
         position: 'absolute',
         top: '0',
         left: '0',
-        height: '3px',
+        height: '2px',
         width: '0%',
         'background-color': theme
       }
+    }, function ($ref) {
+      $progress = $ref;
     });
-    var $progress = layers['artplayer-plugin-gif-progress'].$ref;
     var timeLimit = 10000;
     var isProcessing = false;
     var pressStartTime = 0;
@@ -2969,9 +2950,9 @@
       var pressTime = new Date() - pressStartTime;
 
       if (isProcessing) {
-        notice.show(i18n.get('There is another gif in the processing'));
+        notice.show = i18n.get('There is another gif in the processing');
       } else if (pressTime < 1000) {
-        notice.show(i18n.get('Gif time is too short'));
+        notice.show = i18n.get('Gif time is too short');
       } else {
         var numFrames = Math.floor(clamp(pressTime, 1000, timeLimit) / 100);
         var videoWidth = $video.videoWidth,
@@ -2982,7 +2963,7 @@
           gifHeight: 200,
           gifWidth: videoWidth / videoHeight * 200
         }, function (image) {
-          downloadImage(image, "".concat(title || 'unnamed', ".gif"));
+          downloadFile(image, "".concat(title || 'unnamed', ".gif"));
         });
       }
     }
@@ -2995,7 +2976,7 @@
           cleanTimer();
           offset = player.currentTime;
           pressStartTime = new Date();
-          notice.show(i18n.get('Long press, gif length is between 1 second and 10 seconds'));
+          notice.show = i18n.get('Long press, gif length is between 1 second and 10 seconds');
 
           (function loop() {
             progressTimer = setTimeout(function () {
@@ -3005,7 +2986,7 @@
                 $progress.style.width = "".concat(width + 1, "%");
                 loop();
               } else {
-                notice.show(i18n.get('Release the mouse to start'));
+                notice.show = i18n.get('Release the mouse to start');
               }
             }, timeLimit / 100);
           })();
@@ -3022,27 +3003,27 @@
         var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
         var callback = arguments.length > 1 ? arguments[1] : undefined;
         isProcessing = true;
-        loading.show();
+        loading.show = true;
         art.emit('artplayerPluginGif:start');
-        notice.show(i18n.get('Start creating gif...'), false);
-        gifshot.createGIF(objectSpread({}, config, {
+        notice.show = i18n.get('Start creating gif...');
+        gifshot.createGIF(_objectSpread({}, config, {
           video: [$video.src],
           crossOrigin: 'anonymous'
         }), function (obj) {
           if (obj.error) {
-            notice.show(obj.errorMsg);
+            notice.show = obj.errorMsg;
             errorHandle(false, obj.errorMsg);
           } else if (typeof callback === 'function') {
             var base64String = obj.image.split(',')[1];
             var blob = b64toBlob(base64String, 'image/gif');
             var blobUrl = URL.createObjectURL(blob);
-            notice.show(i18n.get('Create gif successfully'));
+            notice.show = i18n.get('Create gif successfully');
             art.emit('artplayerPluginGif', blobUrl);
             callback(blobUrl);
           }
 
           isProcessing = false;
-          loading.hide();
+          loading.show = false;
           art.emit('artplayerPluginGif:end');
         });
       }
@@ -3051,5 +3032,5 @@
 
   return artplayerPluginGif;
 
-}));
+})));
 //# sourceMappingURL=artplayer-plugin-gif.js.map

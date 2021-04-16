@@ -2,7 +2,7 @@
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
     (global = global || self, global.artplayerPluginBacklight = factory());
-}(this, function () { 'use strict';
+}(this, (function () { 'use strict';
 
     function matrixCallback(callback) {
       var result = [];
@@ -101,7 +101,7 @@
       $player.insertBefore($backlight, $video);
 
       (function loop() {
-        window.requestAnimationFrame(function () {
+        setTimeout(function () {
           if (player.playing) {
             var clientWidth = $video.clientWidth,
                 clientHeight = $video.clientHeight;
@@ -128,7 +128,7 @@
           if (!art.isDestroy) {
             loop();
           }
-        });
+        }, 200);
       })();
 
       return {
@@ -138,5 +138,5 @@
 
     return artplayerPluginBacklight;
 
-}));
+})));
 //# sourceMappingURL=artplayer-plugin-backlight.js.map

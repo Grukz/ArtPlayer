@@ -1,37 +1,27 @@
 export default class Storage {
-    constructor(art) {
-        this.art = art;
+    constructor() {
         this.name = 'artplayer_settings';
-        this.init();
-    }
-
-    init() {
-        const { option } = this.art;
-        const volume = this.get('volume');
-        if (volume) {
-            option.volume = volume;
-        }
     }
 
     get(key) {
-        const storage = JSON.parse(window.localStorage.getItem(this.name)) || {};
-        return key ? storage[key] : {};
+        const storage = JSON.parse(localStorage.getItem(this.name)) || {};
+        return key ? storage[key] : storage;
     }
 
     set(key, value) {
         const storage = Object.assign({}, this.get(), {
             [key]: value,
         });
-        window.localStorage.setItem(this.name, JSON.stringify(storage));
+        localStorage.setItem(this.name, JSON.stringify(storage));
     }
 
     del(key) {
         const storage = this.get();
         delete storage[key];
-        window.localStorage.setItem(this.name, JSON.stringify(storage));
+        localStorage.setItem(this.name, JSON.stringify(storage));
     }
 
     clean() {
-        window.localStorage.removeItem(this.name);
+        localStorage.removeItem(this.name);
     }
 }

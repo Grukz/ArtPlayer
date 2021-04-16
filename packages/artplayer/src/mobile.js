@@ -1,11 +1,19 @@
+import config from './config';
 import { clamp, getExt } from './utils';
 
 export default class Mobile {
     constructor(art) {
         const {
             option,
+            events: { proxy },
             template: { $video },
         } = art;
+
+        config.events.forEach(eventName => {
+            proxy($video, eventName, event => {
+                art.emit(`video:${event.type}`, event);
+            });
+        });
 
         Object.keys(option.moreVideoAttr).forEach(key => {
             $video[key] = option.moreVideoAttr[key];
@@ -32,13 +40,11 @@ export default class Mobile {
         const typeName = option.type || getExt(option.url);
         const typeCallback = option.customType[typeName];
         if (typeName && typeCallback) {
-            art.emit('beforeCustomType', typeName);
             typeCallback($video, option.url, art);
-            art.emit('afterCustomType', typeName);
+            art.emit('customType', typeName);
         } else {
-            art.emit('beforeAttachUrl', option.url);
             $video.src = option.url;
-            art.emit('afterAttachUrl', $video.src);
+            art.emit('url', $video.src);
         }
     }
 }

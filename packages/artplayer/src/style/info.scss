@@ -1,5 +1,5 @@
-.artplayer-video-player {
-    .artplayer-info {
+.art-video-player {
+    .art-info {
         display: none;
         flex-direction: column;
         position: absolute;
@@ -11,10 +11,10 @@
         padding: 10px;
         color: #fff;
         font-size: 12px;
-        font-family: Noto Sans CJK SC DemiLight,Roboto,Segoe UI,Tahoma,Arial,Helvetica,sans-serif;
+        font-family: Noto Sans CJK SC DemiLight, Roboto, Segoe UI, Tahoma, Arial, Helvetica, sans-serif;
         -webkit-font-smoothing: antialiased;
-        background: rgba(0,0,0,.7);
-    
+        background: rgba(0, 0, 0, 0.9);
+
         .art-info-item {
             display: flex;
             margin-bottom: 5px;
@@ -22,7 +22,7 @@
                 width: 100px;
                 text-align: right;
             }
-    
+
             .art-info-content {
                 flex: 1;
                 overflow: hidden;
@@ -31,8 +31,8 @@
                 padding-left: 5px;
             }
         }
-    
-        .artplayer-info-close {
+
+        .art-info-close {
             position: absolute;
             top: 5px;
             right: 5px;
@@ -40,8 +40,8 @@
         }
     }
 
-    &.artplayer-info-show {
-        .artplayer-info {
+    &.art-info-show {
+        .art-info {
             display: flex;
         }
     }

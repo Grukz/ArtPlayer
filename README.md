@@ -1,67 +1,63 @@
-# ArtPlayer
+# ArtPlayer.js
 
-[![Build Status](https://www.travis-ci.org/zhw2590582/ArtPlayer.svg?branch=master)](https://www.travis-ci.org/zhw2590582/ArtPlayer)
+-   [中文介绍](./README-CN.md)
+
+> :art: ArtPlayer.js is a modern and full featured HTML5 video player
+
 ![version](https://badgen.net/npm/v/artplayer)
 ![license](https://badgen.net/npm/license/artplayer)
 ![size](https://badgen.net/bundlephobia/minzip/artplayer)
 [![npm Downloads](https://img.shields.io/npm/dt/artplayer.svg)](https://www.npmjs.com/package/artplayer)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/354e9953b70a4791a5a46194d587c707)](https://www.codacy.com/app/zhw2590582/ArtPlayer?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=zhw2590582/ArtPlayer&amp;utm_campaign=Badge_Grade)
-[![dependencies Status](https://david-dm.org/zhw2590582/artplayer/status.svg)](https://david-dm.org/zhw2590582/artplayer)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/354e9953b70a4791a5a46194d587c707)](https://www.codacy.com/app/zhw2590582/ArtPlayer?utm_source=github.com&utm_medium=referral&utm_content=zhw2590582/ArtPlayer&utm_campaign=Badge_Grade)
 
-> ArtPlayer is a modern HTML5 video player
-
-![Screenshot](./screenshot.png)
+![Screenshot](./images/screenshot.png)
 
 ## Features
 
--   Support `vtt` and `srt` subtitles
--   Support video quality switching
--   Support for custom `control`, `layer`, `contextmenu`, `setting`
--   Support `playback rate`, `aspect ratio`, `flip`, `window fullscreen` or `web fullscreen` adjustment
--   Support integration with other dependencies, like: `flv.js`, `hls.js`, `dash.js`, `shaka-player`, `webtorrent`
--   Support chrome native picture-in-picture mode, or custom picture-in-picture mode
--   Support `thumbnails` and `highlight` in the progress bar
--   Support to maintain the original video ratio, adaptive size
--   Support rich custom event monitoring, easy to expand
--   Support for internationalization of controls
--   Support for custom plugins
--   Support local video preview
--   Support subtitle time offset
--   Support `screenshot`
--   And more...
+-   <b>Size</b> - `25kB` minified and gzipped
+-   <b>Subtitle</b> - Support for `.VTT`, `.ASS` and `.SRT` formats
+-   <b>Customizable</b> - `Right Click Menu`, `Business Layer`, `Video Controller` and `Settings Panel`
+-   <b>Controller</b> - `Quality Switch`, `Subtitle Switch`, `Play Speed`, `Aspect Ratio`, `Video Flip`, `Fullscreen`, `Picture In Picture`, `Screenshot`, `Thumbnail`, `Adaptive Size`, `Highlight` and `Hotkey`...
+-   <b>Built-in</b> - `Open Local Subtitles`, `Open Local Video`, `Mini Progress Bar`, `Network Detection` and `Subtitle Time Offset`
+-   <b>Integration</b> - Easy to integration with other dependencies: `flv.js`, `hls.js`, `dash.js`, `shaka-player`, `webtorrent`...
+-   <b>Code</b> - Vanilla `ES6` and `SASS`, Highly decoupled code, clear structure, easy to track bugs and add new features
+-   <b>Document</b> - Detailed interface documentation and rich code demo
+-   <b>API</b> - Rich interface and response events, easy to interface with business or custom plugin
+-   <b>I18N</b> - support for internationalization of controls
 
 ## Ecosystem
 
-| Project                                                                                                               | Description                    | Demo                                                                                                                                                |
-| --------------------------------------------------------------------------------------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [artplayer-plugin-danmuku](https://github.com/zhw2590582/ArtPlayer/tree/master/packages/artplayer-plugin-danmuku)     | Danmuku plugin for ArtPlayer   | [demo](https://artplayer.org/?libs=.%2Funcompiled%2Fartplayer-plugin-danmuku.js&example=danmuku)                                                    |
-| [artplayer-plugin-gif](https://github.com/zhw2590582/ArtPlayer/tree/master/packages/artplayer-plugin-gif)             | Gif plugin for ArtPlayer       | [demo](https://artplayer.org/?libs=.%2Funcompiled%2Fartplayer-plugin-gif.js&example=gif)                                                            |
-| [artplayer-plugin-backlight](https://github.com/zhw2590582/ArtPlayer/tree/master/packages/artplayer-plugin-backlight) | Backlight plugin for ArtPlayer | [demo](https://artplayer.org/?libs=.%2Funcompiled%2Fartplayer-plugin-backlight.js&example=backlight)                                                |
-| [artplayer-plugin-playlist](https://github.com/zhw2590582/ArtPlayer/tree/master/packages/artplayer-plugin-playlist)   | Playlist plugin for ArtPlayer  | [demo](https://artplayer.org/?libs=.%2Funcompiled%2Fartplayer-plugin-playlist.js%0A.%2Funcompiled%2Fartplayer-plugin-playlist.css&example=playlist) |
-| [artplayer-plugin-blur](https://github.com/zhw2590582/ArtPlayer/tree/master/packages/artplayer-plugin-blur)           | Blur plugin for ArtPlayer      | [demo](https://artplayer.org/?libs=.%2Funcompiled%2Fartplayer-plugin-blur.js&example=blur)                                                          |
-| [artplayer-tool-thumbnail](https://github.com/zhw2590582/ArtPlayer/tree/master/packages/artplayer-tool-thumbnail)     | Thumbnail tool for ArtPlayer   | [demo](https://artplayer.org/?libs=.%2Funcompiled%2Fartplayer-tool-thumbnail.js&example=thumbnail)                                                  |
-| [artplayer-tool-github](https://github.com/zhw2590582/ArtPlayer/tree/master/packages/artplayer-tool-github)           | Github api tool for ArtPlayer  | [demo](https://artplayer.org/?libs=.%2Funcompiled%2Fartplayer-tool-github.js%0A.%2Funcompiled%2Fartplayer-plugin-danmuku.js&example=github)         |  |
-| [artplayer-react](https://github.com/zhw2590582/ArtPlayer/tree/master/packages/artplayer-react)                       | React Component for Artplayer  | [demo](https://codesandbox.io/s/n74859y9rl)                                                                                                         |
-| [artplayer-vue](https://github.com/zhw2590582/ArtPlayer/tree/master/packages/artplayer-vue)                           | Vue Component for Artplayer    | [demo](https://codesandbox.io/s/6z76lm109n)                                                                                                         |
+| Project                                                                                                               | Description         | Demo                                                                                                                                        |
+| --------------------------------------------------------------------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| [artplayer-plugin-danmuku](https://github.com/zhw2590582/ArtPlayer/tree/master/packages/artplayer-plugin-danmuku)     | Danmuku plugin      | [demo](https://artplayer.org/?libs=.%2Funcompiled%2Fartplayer-plugin-danmuku.js&example=danmuku)                                            |
+| [artplayer-plugin-gif](https://github.com/zhw2590582/ArtPlayer/tree/master/packages/artplayer-plugin-gif)             | Gif plugin          | [demo](https://artplayer.org/?libs=.%2Funcompiled%2Fartplayer-plugin-gif.js&example=gif)                                                    |
+| [artplayer-plugin-backlight](https://github.com/zhw2590582/ArtPlayer/tree/master/packages/artplayer-plugin-backlight) | Backlight plugin    | [demo](https://artplayer.org/?libs=.%2Funcompiled%2Fartplayer-plugin-backlight.js&example=backlight)                                        |
+| [artplayer-tool-thumbnail](https://github.com/zhw2590582/ArtPlayer/tree/master/packages/artplayer-tool-thumbnail)     | Thumbnail tool      | [demo](https://artplayer.org/?libs=.%2Funcompiled%2Fartplayer-tool-thumbnail.js&example=thumbnail)                                          |
+| [artplayer-tool-github](https://github.com/zhw2590582/ArtPlayer/tree/master/packages/artplayer-tool-github)           | Github Danmuku tool | [demo](https://artplayer.org/?libs=.%2Funcompiled%2Fartplayer-tool-github.js%0A.%2Funcompiled%2Fartplayer-plugin-danmuku.js&example=github) |     |
+| [artplayer-react](https://github.com/zhw2590582/ArtPlayer/tree/master/packages/artplayer-react)                       | React Component     | [demo](https://codesandbox.io/s/n74859y9rl)                                                                                                 |
+| [artplayer-vue](https://github.com/zhw2590582/ArtPlayer/tree/master/packages/artplayer-vue)                           | Vue Component       | [demo](https://codesandbox.io/s/6z76lm109n)                                                                                                 |
 
-## Demo
+## Homepage
 
-[Checkout the demo](https://artplayer.org/) from Github Pages
+[https://artplayer.org](https://artplayer.org)
+
+## Mobile Demo
+
+![mobile](./images/mobile.png)
 
 ## Document
 
-[Checkout the Document](https://artplayer.org/document) from Github Pages
+[https://artplayer.org/document](https://artplayer.org/document)
 
 ## Install
 
-Install with `npm`
+Install with `npm`:
 
 ```bash
 $ npm install artplayer
 ```
 
-Or install with `yarn`
+Or install with `yarn`:
 
 ```bash
 $ yarn add artplayer
@@ -69,14 +65,18 @@ $ yarn add artplayer
 
 ```js
 import Artplayer from 'artplayer';
-import 'artplayer/dist/artplayer.css';
 ```
 
-Or umd builds are also available
+Or umd builds are also available:
 
 ```html
-<link rel="stylesheet" href="path/to/artplayer.css" />
 <script src="path/to/artplayer.js"></script>
+```
+
+Or from jsDelivr CDN:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/artplayer/dist/artplayer.js"></script>
 ```
 
 Will expose the global variable to `window.Artplayer`.
@@ -94,13 +94,39 @@ var art = new Artplayer({
 });
 ```
 
-## Changelog
+## Contribution
 
-[Checkout the changelog](https://github.com/zhw2590582/ArtPlayer/blob/master/changelog.md)
+Installation dependency:
+
+```bash
+$ npm install
+$ npm run bootstrap
+```
+
+Run the developer mode and select the project you want to develop:
+
+```bash
+$ npm run dev
+```
+
+Open web server:
+
+```bash
+$ npm start
+```
+
+## Donations
+
+We accept donations through these channels:
+
+![pay](./images/pay.png)
+
+-   [Patreon](https://www.patreon.com/artplayer)
+-   [Paypal](https://www.paypal.me/harveyzack)
 
 ## QQ Group
 
-![QQ Group](./QQgroup.png)
+![QQ Group](./images/qqgroup.png)
 
 ## License
 

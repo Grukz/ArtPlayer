@@ -1,5 +1,5 @@
-import Artplayer from 'artplayer';
-import 'artplayer/dist/artplayer.css';
+import Artplayer from '../../artplayer/src';
+import '../../artplayer/src/style/index.scss';
 
 export default {
     data() {
@@ -20,7 +20,9 @@ export default {
             container: this.$refs.artRef,
         });
 
-        this.$emit('getInstance', this.instance);
+        this.$nextTick(() => {
+            this.$emit('getInstance', this.instance);
+        });
     },
     beforeDestroy() {
         if (this.instance && this.instance.destroy) {
@@ -28,12 +30,8 @@ export default {
         }
     },
     render(h) {
-        return h(
-            'div',
-            {
-                ref: 'artRef',
-            },
-            'render',
-        );
+        return h('div', {
+            ref: 'artRef',
+        });
     },
 };

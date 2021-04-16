@@ -1,22 +1,38 @@
-import subtitle from './subtitle';
-import localPreview from './localPreview';
+import { errorHandle, has, def } from '../utils';
+import subtitleOffset from './subtitleOffset';
+import localVideo from './localVideo';
+import localSubtitle from './localSubtitle';
 import miniProgressBar from './miniProgressBar';
+import networkMonitor from './networkMonitor';
 
 export default class Plugins {
     constructor(art) {
         this.art = art;
         this.id = 0;
 
-        if (art.option.subtitle.url) {
-            this.add(subtitle);
+        const { option } = art;
+
+        if (option.subtitle.url && option.subtitleOffset) {
+            this.add(subtitleOffset);
         }
-        
-        if (!art.option.isLive) {
+
+        if (!option.isLive && option.miniProgressBar) {
             this.add(miniProgressBar);
         }
 
-        this.add(localPreview);
-        art.option.plugins.forEach(plugin => {
+        if (option.localVideo) {
+            this.add(localVideo);
+        }
+
+        if (option.localSubtitle) {
+            this.add(localSubtitle);
+        }
+
+        if (option.networkMonitor) {
+            this.add(networkMonitor);
+        }
+
+        art.option.plugins.forEach((plugin) => {
             this.add(plugin);
         });
     }
@@ -24,16 +40,11 @@ export default class Plugins {
     add(plugin) {
         this.id += 1;
         const result = plugin.call(this, this.art);
-        let pluginName = '';
-        if (result && result.name) {
-            pluginName = result.name;
-        } else if (plugin.name) {
-            pluginName = plugin.name;
-        } else {
-            pluginName = `plugin${this.id}`;
-        }
-        this[pluginName] = result;
-        this.art.emit('plugin:add', plugin);
+        const pluginName = (result && result.name) || plugin.name || `plugin${this.id}`;
+        errorHandle(!has(this, pluginName), `Cannot add a plugin that already has the same name: ${pluginName}`);
+        def(this, pluginName, {
+            value: result,
+        });
         return this;
     }
 }

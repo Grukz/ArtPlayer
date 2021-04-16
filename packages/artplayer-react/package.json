@@ -1,10 +1,9 @@
 {
   "name": "artplayer-react",
-  "version": "3.1.9",
+  "version": "3.5.27",
   "expose": "ArtplayerReact",
   "description": "React Component for Artplayer",
   "main": "dist/artplayer-react.js",
-  "style": "dist/artplayer-react.css",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,7 +22,7 @@
   },
   "homepage": "https://github.com/zhw2590582/ArtPlayer#readme",
   "dependencies": {
-    "artplayer": "latest",
     "react": "latest"
-  }
+  },
+  "gitHead": "5ea211ef738351668e4acace326af4ff6947e2ee"
 }

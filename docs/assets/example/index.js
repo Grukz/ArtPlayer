@@ -1,48 +1,51 @@
-var url = 'https://zhw2590582.github.io/assets-cdn';
 var art = new Artplayer({
     container: '.artplayer-app',
-    url: url + '/video/one-more-time-one-more-chance-480p.mp4',
-    title: '【新海诚动画】『秒速5センチメートル』',
-    poster: url + '/image/one-more-time-one-more-chance-poster.jpg',
+    url: 'https://artplayer.org/assets/sample/video.mp4',
+    title: 'One More Time One More Chance',
+    poster: '/assets/sample/poster.jpg',
     volume: 0.5,
     isLive: false,
     muted: false,
     autoplay: false,
     pip: true,
     autoSize: true,
+    autoMini: true,
     screenshot: true,
     setting: true,
     loop: true,
     flip: true,
+    rotate: true,
     playbackRate: true,
     aspectRatio: true,
     fullscreen: true,
     fullscreenWeb: true,
+    subtitleOffset: true,
+    miniProgressBar: true,
+    localVideo: true,
+    localSubtitle: true,
+    networkMonitor: false,
     mutex: true,
+    light: true,
+    backdrop: true,
     theme: '#ffad00',
-    lang: 'zh-cn',
+    lang: navigator.language.toLowerCase(),
     moreVideoAttr: {
         crossOrigin: 'anonymous',
     },
     contextmenu: [
         {
-            html: '自定义菜单 - 天亮请关灯 Σ(っ °Д °;)っ',
-            click: function() {
-                console.info('自定义菜单 - 天亮请关灯 Σ(っ °Д °;)っ');
-                this.hide();
+            html: 'Custom menu',
+            click: function (contextmenu) {
+                console.info('You clicked on the custom menu');
+                contextmenu.show = false;
             },
         },
     ],
     layers: [
         {
-            html: `<img style="width: 100px" src="${url}/image/your-name.png">`,
-            click: function() {
-                art.destroy(true);
-                art = new Artplayer({
-                    autoplay: true,
-                    container: '.artplayer-app',
-                    url: url + '/video/you-name.mp4',
-                });
+            html: `<img style="width: 100px" src="/assets/sample/layer.png">`,
+            click: function () {
+                console.info('You clicked on the custom layer');
             },
             style: {
                 position: 'absolute',
@@ -55,24 +58,28 @@ var art = new Artplayer({
     quality: [
         {
             default: true,
-            name: '标清 480P',
-            url: url + '/video/one-more-time-one-more-chance-480p.mp4',
+            name: 'SD 480P',
+            url: '/assets/sample/video.mp4',
         },
         {
-            name: '高清 720P',
-            url: url + '/video/one-more-time-one-more-chance-720p.mp4',
+            name: 'HD 720P',
+            url: '/assets/sample/video.mp4',
         },
     ],
     thumbnails: {
-        url: url + '/image/one-more-time-one-more-chance-thumbnails.png',
-        width: 190,
-        height: 107,
+        url: '/assets/sample/thumbnails.png',
+        number: 100,
+        width: 160,
+        height: 90,
+        column: 10,
     },
     subtitle: {
-        url: url + '/subtitle/one-more-time-one-more-chance.srt',
+        url: '/assets/sample/subtitle.srt',
         style: {
             color: '#03A9F4',
         },
+        encoding: 'utf-8',
+        bilingual: true,
     },
     highlight: [
         {
@@ -98,16 +105,15 @@ var art = new Artplayer({
     ],
     controls: [
         {
-            name: 'preview',
             position: 'right',
-            html: '打开',
-            mounted: $preview => {
-                art.plugins.localPreview.attach($preview);
+            html: 'Control',
+            click: function () {
+                console.info('You clicked on the custom control');
             },
         },
     ],
     icons: {
-        loading: '<img src="./assets/img/ploading.gif">',
-        state: '<img src="./assets/img/state.png">',
+        loading: '<img src="/assets/img/ploading.gif">',
+        state: '<img src="/assets/img/state.png">',
     },
 });
